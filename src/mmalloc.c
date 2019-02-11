@@ -10,8 +10,8 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "freestore.h"
 #include "segList.h"
+#include "freestore.h"
 #include "mmalloc.h"
 
 struct memManager {
@@ -36,6 +36,7 @@ void mminit() {
 }
 
 void* mmalloc(long int size) {
+   // This assert causes memory manager to crash program if sufficient memory unavailable -- not ideal!
    assert(fsIsAvail(memoryManager.freestore, size));
    Segment_t* seg = fsAlloc(&memoryManager.freestore, size);
    slAdd(&memoryManager.allocated, seg);
@@ -51,7 +52,7 @@ void* mcalloc(int nitems, int item_size) {
 void mfree(void* ptr)
 {
    Segment_t* seg = slFind(memoryManager.allocated, ptr);
-   assert(seg != NULL);
+   assert(seg != NULL);  // Crash program if trying to free a ptr that is not allocated
    slRemove(&memoryManager.allocated, seg);
    fsFree(&memoryManager.freestore, seg);
    // notice there is no way for us to set the caller's pointer to NULL for them!

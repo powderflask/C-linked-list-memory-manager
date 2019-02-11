@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <limits.h>
 
+#include "segList.h"
 #include "freestore.h"
 
 //----- TEST DRIVER -----
@@ -54,12 +55,12 @@ int main( )
    printf("After 3 segments freed back to heap:\n");
    fsPrint(heap);
 
-   s1 = fsAlloc(&heap, 18);
+   s1 = fsAlloc(&heap, 25);
    assert(s1 != NULL);
-   assert(s1->size == 18);
-   s2 = fsAlloc(&heap, 25);
+   assert(s1->size == 25);
+   s2 = fsAlloc(&heap, 18);
    assert(s2 != NULL);
-   assert(s2->size == 25);
+   assert(s2->size == 18);
 
    printf("After 2 small segments allocated:\n");
    fsPrint(heap);

@@ -1,6 +1,8 @@
 /*
  *  A Free Store ADT
- *    reprents the available memory heap 
+ *    represents the available memory heap 
+ *
+ *  TODO: Add function to de-fragment freestore when it gets too fragmented.
  *
  *  Author:  Joseph Fall
  *  Date:    Feb. 19, 2018
@@ -78,6 +80,6 @@ void fsFree(FreeStore_t* heap, Segment_t* segment) {
 // Helper:  for testing only
 void fsPrint(const FreeStore_t heap)
 {
-   printf("\nFree Store:  ");
+   printf("\nFree Store ");
    slPrint(heap);
 }

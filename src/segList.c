@@ -14,9 +14,9 @@
 #include "segList.h"
 
 // Helper prototypes
-void slLink(SegList_t* list, Segment_t* cursor, Segment_t* newSeg);
-Segment_t* fsUnlink(SegList_t* list, Segment_t* cursor);
-Segment_t* fsFindPriorNode(const SegList_t list, const Segment_t* cursor);
+void slLink(Segment_t* cursor, Segment_t* newSeg);
+Segment_t* slUnlinkNext(Segment_t* cursor);
+Segment_t* slFindPriorNode(const SegList_t list, const Segment_t* cursor);
 
 
 //------ SEGMENT --------
@@ -67,8 +67,16 @@ void slDestruct(SegList_t* list)
  */
 void slAdd(SegList_t* list, Segment_t* segment) 
 {
-   segment->next = list->head->next;
-   list->head->next = segment;
+   slLink(list->head, segment);
+}
+
+/**
+ * Remove and return the given segment from the Segment list
+ * PRE: slFind(*list, segment->address) != NULL  (i.e., segment is in the list)
+ */
+Segment_t* slRemove(SegList_t* list, Segment_t* segment)
+{
+   return slUnlinkNext(slFindPriorNode(*list, segment));
 }
 
 /**
@@ -117,8 +125,8 @@ Segment_t* slFindBestFit(const SegList_t list, long int size)
 }
 
 
-// HELPER: Link in the new segment following the cursor
-void slLink(SegList_t* list, Segment_t* cursor, Segment_t* newSeg) 
+// HELPER: Link in the new segment after the cursor
+void slLink(Segment_t* cursor, Segment_t* newSeg) 
 {
    assert(newSeg != NULL);
    assert(cursor != NULL);
@@ -126,8 +134,8 @@ void slLink(SegList_t* list, Segment_t* cursor, Segment_t* newSeg)
    cursor->next = newSeg;
 }
 
-// HELPER: Unlink the given cursor node from the list and return it
-Segment_t* slUnlinkNext(SegList_t* list, Segment_t* cursor) 
+// HELPER: Unlink the node following the cursor from the list and return it
+Segment_t* slUnlinkNext(Segment_t* cursor) 
 {
    assert(cursor != NULL);
    Segment_t* unlink = cursor->next;
@@ -141,10 +149,10 @@ Segment_t* slUnlinkNext(SegList_t* list, Segment_t* cursor)
 
 // HELPER: Find the node prior to the cursor
 // PRE: slFind(*list, segment->address) != NULL  (i.e., segment is in the list)
-Segment_t* slFindPriorNode(SegList_t* list, Segment_t* cursor) 
+Segment_t* slFindPriorNode(const SegList_t list, const Segment_t* cursor) 
 {
    assert(cursor != NULL);
-   Segment_t* prior = list->head;
+   Segment_t* prior = list.head;
    while (prior->next != cursor) {
       prior = prior->next;
       assert(prior != NULL);  // cursor was not a Node in the list - illegal call!
@@ -153,21 +161,11 @@ Segment_t* slFindPriorNode(SegList_t* list, Segment_t* cursor)
    return prior;
 }
 
-/**
- * Remove and return the given segment from the Segment list
- * PRE: slFind(*list, segment->address) != NULL  (i.e., segment is in the list)
- */
-Segment_t* slRemove(SegList_t* list, Segment_t* segment)
-{
-   return slUnlinkNext(list, slFindPriorNode(list, segment));
-}
-
-
 // Helper:  for testing only
 void slPrint(const SegList_t list)
 {
    Segment_t* cur = list.head->next;
-   printf("\nSegment List:  ");
+   printf("Segments:  ");
    while (cur != NULL) {
        segPrint(*cur);
        cur = cur->next;

@@ -61,6 +61,7 @@ void mfree(void* ptr)
 // Helper:  for testing only
 void mmPrint()
 {
+   printf("\nAllocated ");
    slPrint(memoryManager.allocated);
    fsPrint(memoryManager.freestore);
 }
